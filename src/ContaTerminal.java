@@ -1,43 +1,13 @@
-
 import java.util.Scanner;
 
 public class ContaTerminal {
     public static void main(String[] args) throws Exception {
-
-        Scanner scanner = new Scanner(System.in);
-        double saldo = 0.0;
-
-        System.out.println("Conta criada com sucesso!");
-        System.out.println("Saldo atual: R$ " + saldo);
-
-        // Depósito
-        System.out.print("Digite o valor para depósito: R$ ");
-        double deposito = scanner.nextDouble();
-        saldo += deposito;
-        System.out.println("Depósito realizado com sucesso!");
-        System.out.println("Saldo atualizado: R$ " + saldo);
-
-        // Saque
-        System.out.print("Digite o valor para saque: R$ ");
-        double saque = scanner.nextDouble();
-
-        if (saque > saldo) {
-            System.out.println("Saldo insuficiente para saque.");
-        } else {
-            saldo -= saque;
-            System.out.println("Saque realizado com sucesso!");
-            System.out.println("Saldo atualizado: R$ " + saldo);
-        }
-
-        scanner.close();
-        
-
-
         boolean modoTeste = true; // Altere para false para entrada manual
-        
-        scanner = configurarScanner(modoTeste);
-        
+
+        Scanner scanner = null;
         try {
+            scanner = configurarScanner(modoTeste);
+
             // Dados que serão preenchidos
             int numeroConta;
             String numeroAgencia;
@@ -50,7 +20,7 @@ public class ContaTerminal {
                 numeroAgencia = "0678-9";
                 nomeCliente = "Maria Oliveira Souza";
                 saldoConta = 2550.75;
-                
+
                 exibirDadosSimulados();
             } else {
                 numeroConta = obterNumeroConta(scanner);
@@ -62,12 +32,14 @@ public class ContaTerminal {
             exibirResumoConta(nomeCliente, numeroAgencia, numeroConta, saldoConta);
 
         } finally {
-            scanner.close();
+            if (scanner != null) {
+                scanner.close();
+            }
         }
     }
 
-    private static Scanner configurarScanner(boolean modoTeste) {
-        if(modoTeste) {
+    public static Scanner configurarScanner(boolean modoTeste) {
+        if (modoTeste) {
             String dadosSimulados = "12345\n0678-9\nMaria Oliveira Souza\n2550.75\n";
             return new Scanner(dadosSimulados);
         }
@@ -87,37 +59,43 @@ public class ContaTerminal {
         System.out.println("Digite o número da conta:");
         int numero = scanner.nextInt();
         scanner.nextLine();
-        if(numero <= 0) throw new IllegalArgumentException("Número inválido!");
+        if (numero <= 0) throw new IllegalArgumentException("Número inválido!");
         return numero;
     }
 
     private static String obterAgencia(Scanner scanner) {
         System.out.println("Digite a agência (XXXX-X):");
         String agencia = scanner.nextLine();
-        if(!agencia.matches("\\d{4}-\\d")) throw new IllegalArgumentException("Formato inválido!");
+        if (!agencia.matches("\\d{4}-\\d")) throw new IllegalArgumentException("Formato inválido!");
         return agencia;
     }
 
-    private static String obterNomeCliente(Scanner scanner) {
+    public static String obterNomeCliente(Scanner scanner) {
         System.out.println("Digite o nome completo:");
         String nome = scanner.nextLine().trim();
-        if(nome.split(" ").length < 2) throw new IllegalArgumentException("Nome incompleto!");
+        if (nome.split(" ").length < 2) throw new IllegalArgumentException("Nome incompleto!");
         return nome;
     }
 
-    private static double obterSaldo(Scanner scanner) {
+    static double obterSaldo(Scanner scanner) {
         System.out.println("Digite o saldo inicial:");
         double saldo = scanner.nextDouble();
-        if(saldo < 0) throw new IllegalArgumentException("Saldo negativo!");
+        if (saldo < 0) throw new IllegalArgumentException("Saldo negativo!");
         return saldo;
+
     }
 
-    private static void exibirResumoConta(String nome, String agencia, int conta, double saldo) {
+
+    static void exibirResumoConta(String nome, String agencia, int conta, double saldo) {
         System.out.println("\n═ RESULTADO ═══════════════════════════");
         System.out.printf("│ %-15s %-25s │\n", "Cliente:", nome);
         System.out.printf("│ %-15s %-25s │\n", "Agência:", agencia);
         System.out.printf("│ %-15s %-25d │\n", "Conta:", conta);
         System.out.printf("│ %-15s R$ %-20.2f │\n", "Saldo:", saldo);
         System.out.println("═════════════════════════════════════════");
+       
+        System.out.printf("Olá %s, obrigado por criar uma conta em nosso banco, sua agência é %s, conta %d e seu saldo %.2f já está disponível para saque.\n", nome, agencia, conta, saldo);
+
+
     }
 }
